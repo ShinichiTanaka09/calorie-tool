@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>目標摂取カロリー計算ツール</title>
+  <meta name="description" content="現在の体重・身長・目標体重・達成までの残り日数から、1日あたりの目標摂取カロリーを計算します。">
+  <style>
+    body {
+      margin: 0;
+      padding: 16px;
+      background: #f5f7fb;
+      color: #222;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
+      line-height: 1.6;
+    }
+    .wrap {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #dfe5ee;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    }
+    h1 {
+      font-size: 24px;
+      margin: 0 0 8px;
+    }
+    p.desc {
+      margin: 0 0 20px;
+      color: #555;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .full {
+      grid-column: 1 / -1;
+    }
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+    input, select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      border: 1px solid #cfd8e3;
+      border-radius: 10px;
+      font-size: 16px;
+      background: #fff;
+    }
+    .hint {
+      color: #666;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+    .actions {
+      margin-top: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .primary {
+      background: #1a73e8;
+      color: #fff;
+    }
+    .secondary {
+      background: #eef3fb;
+      color: #1a3f7a;
+    }
+    .result {
+      display: none;
+      margin-top: 22px;
+    }
+    .box-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+    .box {
+      background: #f8fafc;
+      border: 1px solid #dfe5ee;
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .box .label {
+      color: #666;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+    .box .value {
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+    .message {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid #d9e7d9;
+      background: #eefbf0;
+      color: #1f5d2c;
+    }
+    .warn {
+      margin-top: 12px;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid #f1d59a;
+      background: #fff9ec;
+      color: #7a5500;
+      display: none;
+    }
+    .footer {
+      margin-top: 16px;
+      color: #666;
+      font-size: 12px;
+    }
+    @media (max-width: 640px) {
+      .grid, .box-grid {
+        grid-template-columns: 1fr;
+      }
+      h1 {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>1日あたりの目標摂取カロリー計算</h1>
+      <p class="desc">現在の体重・身長・目標体重・年齢・活動量・達成までの残り日数から、1日あたりの目標摂取カロリーを計算します。</p>
+
+      <div class="grid">
+        <div>
+          <label for="currentWeight">現在の体重（kg）</label>
+          <input id="currentWeight" type="number" step="0.1" placeholder="例：70">
+        </div>
+
+        <div>
+          <label for="height">身長（cm）</label>
+          <input id="height" type="number" step="0.1" placeholder="例：170">
+        </div>
+
+        <div>
+          <label for="goalWeight">目標体重（kg）</label>
+          <input id="goalWeight" type="number" step="0.1" placeholder="例：65">
+        </div>
+
+        <div>
+          <label for="age">年齢</label>
+          <input id="age" type="number" step="1" placeholder="例：30">
+        </div>
+
+        <div>
+          <label for="sex">性別</label>
+          <select id="sex">
+            <option value="male">男性</option>
+            <option value="female">女性</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="activity">活動量</label>
+          <select id="activity">
+            <option value="1.2">ほぼ運動しない</option>
+            <option value="1.375">軽い運動（週1〜3回）</option>
+            <option value="1.55" selected>中程度の運動（週3〜5回）</option>
+            <option value="1.725">高い運動量（週6〜7回）</option>
+            <option value="1.9">非常に高い運動量</option>
+          </select>
+        </div>
+
+        <div class="full">
+          <label for="daysUntilGoal">達成までの残り日数</label>
+          <input id="daysUntilGoal" type="number" step="1" placeholder="例：60">
+          <div class="hint">共有時の互換性を優先して、日付ではなく残り日数で計算します。</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="primary" onclick="calculateCalories()">計算する</button>
+        <button class="secondary" onclick="resetForm()">リセット</button>
+      </div>
+
+      <div id="result" class="result">
+        <div class="box-grid">
+          <div class="box">
+            <div class="label">基礎代謝</div>
+            <div class="value" id="bmrValue">-</div>
+          </div>
+          <div class="box">
+            <div class="label">維持カロリー目安</div>
+            <div class="value" id="tdeeValue">-</div>
+          </div>
+          <div class="box">
+            <div class="label">目標摂取カロリー</div>
+            <div class="value" id="targetValue">-</div>
+          </div>
+        </div>
+
+        <div class="message" id="message"></div>
+        <div class="warn" id="warn"></div>
+
+        <div class="footer">
+          ※ 基礎代謝は Mifflin-St Jeor式で概算しています。<br>
+          ※ 体重1kgあたり約7,200kcalで概算しています。<br>
+          ※ 医療判断ではありません。極端な数値が出る場合は専門家に相談してください。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function byId(id) {
+      return document.getElementById(id);
+    }
+
+    function roundNum(n) {
+      return Math.round(n);
+    }
+
+    function calculateBMR(weight, height, age, sex) {
+      if (sex === "female") {
+        return (10 * weight) + (6.25 * height) - (5 * age) - 161;
+      }
+      return (10 * weight) + (6.25 * height) - (5 * age) + 5;
+    }
+
+    function calculateCalories() {
+      var currentWeight = parseFloat(byId("currentWeight").value);
+      var height = parseFloat(byId("height").value);
+      var goalWeight = parseFloat(byId("goalWeight").value);
+      var age = parseInt(byId("age").value, 10);
+      var activity = parseFloat(byId("activity").value);
+      var sex = byId("sex").value;
+      var daysUntilGoal = parseInt(byId("daysUntilGoal").value, 10);
+
+      if (isNaN(currentWeight) || isNaN(height) || isNaN(goalWeight) || isNaN(age) || isNaN(daysUntilGoal)) {
+        alert("現在の体重、身長、目標体重、年齢、達成までの残り日数を入力してください。");
+        return;
+      }
+
+      if (daysUntilGoal <= 0) {
+        alert("達成までの残り日数は1以上で入力してください。");
+        return;
+      }
+
+      var bmr = calculateBMR(currentWeight, height, age, sex);
+      var tdee = bmr * activity;
+
+      var weightChangeKg = goalWeight - currentWeight;
+      var totalAdjustment = weightChangeKg * 7200;
+      var dailyAdjustment = totalAdjustment / daysUntilGoal;
+      var targetCalories = tdee + dailyAdjustment;
+
+      var absWeightChange = Math.abs(weightChangeKg);
+      var weeklyPace = absWeightChange / (daysUntilGoal / 7);
+      var direction = "体重維持";
+
+      if (goalWeight < currentWeight) {
+        direction = "減量";
+      } else if (goalWeight > currentWeight) {
+        direction = "増量";
+      }
+
+      byId("bmrValue").innerHTML = roundNum(bmr) + " kcal";
+      byId("tdeeValue").innerHTML = roundNum(tdee) + " kcal";
+      byId("targetValue").innerHTML = roundNum(targetCalories) + " kcal";
+
+      var adjustText = "調整なし";
+      if (dailyAdjustment < 0) {
+        adjustText = "マイナス";
+      } else if (dailyAdjustment > 0) {
+        adjustText = "プラス";
+      }
+
+      byId("message").innerHTML =
+        "目標は <strong>" + direction + "</strong> です。<br>" +
+        daysUntilGoal + "日で " + absWeightChange.toFixed(1) + "kg を目指すため、" +
+        "1日あたり約 <strong>" + roundNum(Math.abs(dailyAdjustment)) + "kcal</strong> の" + adjustText + "調整が必要です。<br>" +
+        "週あたりの変化ペース目安は <strong>" + weeklyPace.toFixed(2) + "kg/週</strong> です。";
+
+      var warns = [];
+
+      if (goalWeight === currentWeight) {
+        warns.push("現在体重と目標体重が同じため、体重維持向けの結果です。");
+      }
+      if (weeklyPace > 1.0) {
+        warns.push("ペースがかなり速めです。期限を延ばした方が現実的な可能性があります。");
+      }
+      if (targetCalories < bmr) {
+        warns.push("目標摂取カロリーが基礎代謝を下回っています。かなり厳しめの設定です。");
+      }
+      if (targetCalories < 1200) {
+        warns.push("1,200kcal未満はかなり低い設定です。無理のない範囲で見直してください。");
+      }
+      if (targetCalories > tdee + 800) {
+        warns.push("増量ペースがかなり大きめです。段階的な調整をおすすめします。");
+      }
+
+      if (warns.length > 0) {
+        byId("warn").style.display = "block";
+        byId("warn").innerHTML = "注意点<br>・" + warns.join("<br>・");
+      } else {
+        byId("warn").style.display = "none";
+        byId("warn").innerHTML = "";
+      }
+
+      byId("result").style.display = "block";
+    }
+
+    function resetForm() {
+      byId("currentWeight").value = "";
+      byId("height").value = "";
+      byId("goalWeight").value = "";
+      byId("age").value = "";
+      byId("sex").value = "male";
+      byId("activity").value = "1.55";
+      byId("daysUntilGoal").value = "";
+      byId("result").style.display = "none";
+      byId("warn").style.display = "none";
+      byId("warn").innerHTML = "";
+    }
+  </script>
+</body>
+</html>
