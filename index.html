@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>目標摂取カロリー計算ツール</title>
-  <meta name="description" content="現在の体重・身長・目標体重・達成までの残り日数から、1日あたりの目標摂取カロリーを計算します。">
+  <title>目標摂取カロリー計算ツール 計算式表示版</title>
+  <meta name="description" content="理論値と現実的な推奨値に加え、途中式も表示する目標摂取カロリー計算ツールです。">
   <style>
     body {
       margin: 0;
@@ -12,42 +13,61 @@
       background: #f5f7fb;
       color: #222;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
-      line-height: 1.6;
+      line-height: 1.7;
     }
+
     .wrap {
-      max-width: 760px;
+      max-width: 960px;
       margin: 0 auto;
     }
+
     .card {
       background: #fff;
       border: 1px solid #dfe5ee;
       border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+      padding: 22px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
     }
+
     h1 {
-      font-size: 24px;
+      font-size: 28px;
       margin: 0 0 8px;
     }
-    p.desc {
-      margin: 0 0 20px;
+
+    .desc {
+      margin: 0 0 18px;
       color: #555;
     }
+
+    .notice {
+      background: #eef6ff;
+      border: 1px solid #cfe2ff;
+      border-radius: 12px;
+      padding: 12px 14px;
+      color: #1f4c8f;
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
+
     .grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 14px;
     }
+
     .full {
       grid-column: 1 / -1;
     }
+
     label {
       display: block;
       font-weight: 700;
       margin-bottom: 6px;
       font-size: 14px;
     }
-    input, select {
+
+    input,
+    select {
       width: 100%;
       box-sizing: border-box;
       padding: 12px;
@@ -56,17 +76,20 @@
       font-size: 16px;
       background: #fff;
     }
+
     .hint {
       color: #666;
       font-size: 12px;
       margin-top: 5px;
     }
+
     .actions {
       margin-top: 18px;
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
     }
+
     button {
       border: 0;
       border-radius: 10px;
@@ -75,76 +98,132 @@
       font-weight: 700;
       cursor: pointer;
     }
+
     .primary {
       background: #1a73e8;
       color: #fff;
     }
+
     .secondary {
       background: #eef3fb;
       color: #1a3f7a;
     }
+
     .result {
       display: none;
       margin-top: 22px;
     }
+
     .box-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
       gap: 12px;
     }
+
     .box {
       background: #f8fafc;
       border: 1px solid #dfe5ee;
       border-radius: 12px;
       padding: 14px;
     }
+
     .box .label {
       color: #666;
       font-size: 13px;
       margin-bottom: 6px;
     }
+
     .box .value {
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 800;
       line-height: 1.2;
     }
-    .message {
-      margin-top: 14px;
-      padding: 14px;
+
+    .section {
+      margin-top: 16px;
+      padding: 16px;
       border-radius: 12px;
-      border: 1px solid #d9e7d9;
-      background: #eefbf0;
-      color: #1f5d2c;
+      border: 1px solid #dfe5ee;
+      background: #fafcff;
     }
+
+    .section h2 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .safe {
+      border-color: #cde8d2;
+      background: #effbf1;
+    }
+
     .warn {
-      margin-top: 12px;
-      padding: 14px;
-      border-radius: 12px;
-      border: 1px solid #f1d59a;
+      border-color: #f1d59a;
       background: #fff9ec;
-      color: #7a5500;
-      display: none;
     }
+
+    .danger {
+      border-color: #f4b4b4;
+      background: #fff1f1;
+    }
+
+    .formula {
+      margin-top: 10px;
+      padding: 12px 14px;
+      background: #ffffff;
+      border: 1px solid #dfe5ee;
+      border-radius: 10px;
+      overflow-x: auto;
+    }
+
+    .formula-title {
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #334155;
+    }
+
+    .formula code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      white-space: pre-wrap;
+      color: #0f172a;
+      font-size: 14px;
+    }
+
     .footer {
       margin-top: 16px;
       color: #666;
       font-size: 12px;
     }
-    @media (max-width: 640px) {
-      .grid, .box-grid {
+
+    ul {
+      margin: 8px 0 0 18px;
+      padding: 0;
+    }
+
+    @media (max-width: 720px) {
+
+      .grid,
+      .box-grid {
         grid-template-columns: 1fr;
       }
+
       h1 {
-        font-size: 22px;
+        font-size: 24px;
       }
     }
   </style>
 </head>
+
 <body>
   <div class="wrap">
     <div class="card">
       <h1>1日あたりの目標摂取カロリー計算</h1>
-      <p class="desc">現在の体重・身長・目標体重・年齢・活動量・達成までの残り日数から、1日あたりの目標摂取カロリーを計算します。</p>
+      <p class="desc">理論値・推奨値に加え、計算の途中式も表示する版です。</p>
+
+      <div class="notice">
+        基礎代謝 → 維持カロリー → 体重差 → 総必要カロリー差 → 1日あたり調整量 → 理論値 → 推奨値、
+        の順で計算過程が見えるようにしています。
+      </div>
 
       <div class="grid">
         <div>
@@ -189,7 +268,7 @@
         <div class="full">
           <label for="daysUntilGoal">達成までの残り日数</label>
           <input id="daysUntilGoal" type="number" step="1" placeholder="例：60">
-          <div class="hint">共有時の互換性を優先して、日付ではなく残り日数で計算します。</div>
+          <div class="hint">日付ではなく残り日数で計算します。</div>
         </div>
       </div>
 
@@ -201,26 +280,52 @@
       <div id="result" class="result">
         <div class="box-grid">
           <div class="box">
-            <div class="label">基礎代謝</div>
+            <div class="label">基礎代謝（BMR）</div>
             <div class="value" id="bmrValue">-</div>
           </div>
           <div class="box">
-            <div class="label">維持カロリー目安</div>
+            <div class="label">維持カロリー（TDEE）</div>
             <div class="value" id="tdeeValue">-</div>
           </div>
           <div class="box">
-            <div class="label">目標摂取カロリー</div>
-            <div class="value" id="targetValue">-</div>
+            <div class="label">理論上の目標値</div>
+            <div class="value" id="theoreticalValue">-</div>
+          </div>
+          <div class="box">
+            <div class="label">推奨目標値</div>
+            <div class="value" id="recommendedValue">-</div>
           </div>
         </div>
 
-        <div class="message" id="message"></div>
-        <div class="warn" id="warn"></div>
+        <div class="section" id="logicSection">
+          <h2>計算結果の見方</h2>
+          <div id="logicText"></div>
+        </div>
+
+        <div class="section" id="formulaSection">
+          <h2>計算の途中式</h2>
+          <div id="formulaText"></div>
+        </div>
+
+        <div class="section safe" id="safeSection">
+          <h2>推奨目標値について</h2>
+          <div id="safeText"></div>
+        </div>
+
+        <div class="section warn" id="warningSection" style="display:none;">
+          <h2>注意点</h2>
+          <div id="warningText"></div>
+        </div>
+
+        <div class="section danger" id="deadlineSection" style="display:none;">
+          <h2>期限についての提案</h2>
+          <div id="deadlineText"></div>
+        </div>
 
         <div class="footer">
           ※ 基礎代謝は Mifflin-St Jeor式で概算しています。<br>
           ※ 体重1kgあたり約7,200kcalで概算しています。<br>
-          ※ 医療判断ではありません。極端な数値が出る場合は専門家に相談してください。
+          ※ 推奨値は減量時 -300〜-500kcal/日、上限 -700kcal/日、増量時 +200〜+300kcal/日、上限 +500kcal/日を目安に算出しています。
         </div>
       </div>
     </div>
@@ -235,11 +340,46 @@
       return Math.round(n);
     }
 
+    function format1(n) {
+      return Number(n).toFixed(1);
+    }
+
     function calculateBMR(weight, height, age, sex) {
       if (sex === "female") {
         return (10 * weight) + (6.25 * height) - (5 * age) - 161;
       }
       return (10 * weight) + (6.25 * height) - (5 * age) + 5;
+    }
+
+    function calculateRecommendedCalories(tdee, currentWeight, goalWeight) {
+      var diff = goalWeight - currentWeight;
+
+      if (diff < 0) {
+        return {
+          recommended: tdee - 500,
+          lowerBound: tdee - 700,
+          upperBound: tdee - 300,
+          mode: "loss"
+        };
+      } else if (diff > 0) {
+        return {
+          recommended: tdee + 250,
+          lowerBound: tdee + 200,
+          upperBound: tdee + 500,
+          mode: "gain"
+        };
+      } else {
+        return {
+          recommended: tdee,
+          lowerBound: tdee - 100,
+          upperBound: tdee + 100,
+          mode: "maintain"
+        };
+      }
+    }
+
+    function formulaBlock(title, text) {
+      return '<div class="formula"><div class="formula-title">' + title + '</div><code>' + text + '</code></div>';
     }
 
     function calculateCalories() {
@@ -263,16 +403,18 @@
 
       var bmr = calculateBMR(currentWeight, height, age, sex);
       var tdee = bmr * activity;
-
       var weightChangeKg = goalWeight - currentWeight;
       var totalAdjustment = weightChangeKg * 7200;
       var dailyAdjustment = totalAdjustment / daysUntilGoal;
-      var targetCalories = tdee + dailyAdjustment;
+      var theoreticalCalories = tdee + dailyAdjustment;
+
+      var recommendation = calculateRecommendedCalories(tdee, currentWeight, goalWeight);
+      var recommendedCalories = recommendation.recommended;
 
       var absWeightChange = Math.abs(weightChangeKg);
       var weeklyPace = absWeightChange / (daysUntilGoal / 7);
-      var direction = "体重維持";
 
+      var direction = "体重維持";
       if (goalWeight < currentWeight) {
         direction = "減量";
       } else if (goalWeight > currentWeight) {
@@ -281,45 +423,146 @@
 
       byId("bmrValue").innerHTML = roundNum(bmr) + " kcal";
       byId("tdeeValue").innerHTML = roundNum(tdee) + " kcal";
-      byId("targetValue").innerHTML = roundNum(targetCalories) + " kcal";
+      byId("theoreticalValue").innerHTML = roundNum(theoreticalCalories) + " kcal";
+      byId("recommendedValue").innerHTML = roundNum(recommendedCalories) + " kcal";
 
-      var adjustText = "調整なし";
-      if (dailyAdjustment < 0) {
-        adjustText = "マイナス";
-      } else if (dailyAdjustment > 0) {
-        adjustText = "プラス";
+      var logicText = "";
+      logicText += "目標は <strong>" + direction + "</strong> です。<br>";
+      logicText += "基礎代謝（BMR）を出し、その値に活動量を掛けて維持カロリー（TDEE）を計算しています。<br>";
+      logicText += "その後、現在体重と目標体重の差を 1kgあたり約7,200kcal で換算し、";
+      logicText += daysUntilGoal + "日で割って、1日あたりの調整量を出しています。<br>";
+      logicText += "今回の理論上の調整量は <strong>" + roundNum(dailyAdjustment) + " kcal/日</strong> で、";
+      logicText += "週あたりの変化ペース目安は <strong>" + weeklyPace.toFixed(2) + "kg/週</strong> です。";
+      byId("logicText").innerHTML = logicText;
+
+      var bmrFormula = "";
+      if (sex === "female") {
+        bmrFormula += "女性の式\n";
+        bmrFormula += "BMR = 10 × 体重 + 6.25 × 身長 - 5 × 年齢 - 161\n";
+        bmrFormula += "BMR = 10 × " + format1(currentWeight) + " + 6.25 × " + format1(height) + " - 5 × " + age + " - 161\n";
+        bmrFormula += "BMR = " + format1(10 * currentWeight) + " + " + format1(6.25 * height) + " - " + format1(5 * age) + " - 161\n";
+        bmrFormula += "BMR = " + format1(bmr) + " kcal";
+      } else {
+        bmrFormula += "男性の式\n";
+        bmrFormula += "BMR = 10 × 体重 + 6.25 × 身長 - 5 × 年齢 + 5\n";
+        bmrFormula += "BMR = 10 × " + format1(currentWeight) + " + 6.25 × " + format1(height) + " - 5 × " + age + " + 5\n";
+        bmrFormula += "BMR = " + format1(10 * currentWeight) + " + " + format1(6.25 * height) + " - " + format1(5 * age) + " + 5\n";
+        bmrFormula += "BMR = " + format1(bmr) + " kcal";
       }
 
-      byId("message").innerHTML =
-        "目標は <strong>" + direction + "</strong> です。<br>" +
-        daysUntilGoal + "日で " + absWeightChange.toFixed(1) + "kg を目指すため、" +
-        "1日あたり約 <strong>" + roundNum(Math.abs(dailyAdjustment)) + "kcal</strong> の" + adjustText + "調整が必要です。<br>" +
-        "週あたりの変化ペース目安は <strong>" + weeklyPace.toFixed(2) + "kg/週</strong> です。";
+      var tdeeFormula = "";
+      tdeeFormula += "TDEE = BMR × 活動量\n";
+      tdeeFormula += "TDEE = " + format1(bmr) + " × " + activity + "\n";
+      tdeeFormula += "TDEE = " + format1(tdee) + " kcal";
 
-      var warns = [];
+      var diffFormula = "";
+      diffFormula += "体重差 = 目標体重 - 現在体重\n";
+      diffFormula += "体重差 = " + format1(goalWeight) + " - " + format1(currentWeight) + "\n";
+      diffFormula += "体重差 = " + format1(weightChangeKg) + " kg";
 
+      var totalFormula = "";
+      totalFormula += "総必要カロリー差 = 体重差 × 7200\n";
+      totalFormula += "総必要カロリー差 = " + format1(weightChangeKg) + " × 7200\n";
+      totalFormula += "総必要カロリー差 = " + format1(totalAdjustment) + " kcal";
+
+      var dailyFormula = "";
+      dailyFormula += "1日あたり調整量 = 総必要カロリー差 ÷ 残り日数\n";
+      dailyFormula += "1日あたり調整量 = " + format1(totalAdjustment) + " ÷ " + daysUntilGoal + "\n";
+      dailyFormula += "1日あたり調整量 = " + format1(dailyAdjustment) + " kcal/日";
+
+      var theoreticalFormula = "";
+      theoreticalFormula += "理論上の目標値 = TDEE + 1日あたり調整量\n";
+      theoreticalFormula += "理論上の目標値 = " + format1(tdee) + " + " + format1(dailyAdjustment) + "\n";
+      theoreticalFormula += "理論上の目標値 = " + format1(theoreticalCalories) + " kcal/日";
+
+      var recommendedFormula = "";
+      if (recommendation.mode === "loss") {
+        recommendedFormula += "推奨値（減量）\n";
+        recommendedFormula += "推奨レンジ = TDEE - 700 ～ TDEE - 300\n";
+        recommendedFormula += "推奨中心値 = TDEE - 500\n";
+        recommendedFormula += "推奨レンジ = " + format1(tdee - 700) + " ～ " + format1(tdee - 300) + " kcal/日\n";
+        recommendedFormula += "推奨中心値 = " + format1(recommendedCalories) + " kcal/日";
+      } else if (recommendation.mode === "gain") {
+        recommendedFormula += "推奨値（増量）\n";
+        recommendedFormula += "推奨レンジ = TDEE + 200 ～ TDEE + 500\n";
+        recommendedFormula += "推奨中心値 = TDEE + 250\n";
+        recommendedFormula += "推奨レンジ = " + format1(tdee + 200) + " ～ " + format1(tdee + 500) + " kcal/日\n";
+        recommendedFormula += "推奨中心値 = " + format1(recommendedCalories) + " kcal/日";
+      } else {
+        recommendedFormula += "推奨値（維持）\n";
+        recommendedFormula += "推奨中心値 = TDEE\n";
+        recommendedFormula += "推奨中心値 = " + format1(recommendedCalories) + " kcal/日";
+      }
+
+      var formulaHtml = "";
+      formulaHtml += formulaBlock("1. 基礎代謝（BMR）の計算", bmrFormula);
+      formulaHtml += formulaBlock("2. 維持カロリー（TDEE）の計算", tdeeFormula);
+      formulaHtml += formulaBlock("3. 体重差の計算", diffFormula);
+      formulaHtml += formulaBlock("4. 総必要カロリー差の計算", totalFormula);
+      formulaHtml += formulaBlock("5. 1日あたり調整量の計算", dailyFormula);
+      formulaHtml += formulaBlock("6. 理論上の目標摂取カロリー", theoreticalFormula);
+      formulaHtml += formulaBlock("7. 推奨目標値の考え方", recommendedFormula);
+      byId("formulaText").innerHTML = formulaHtml;
+
+      var safeText = "";
+      if (recommendation.mode === "loss") {
+        safeText += "減量では、理論値だけでなく <strong>無理の少ない継続可能性</strong> を重視しています。<br>";
+        safeText += "このツールでは推奨レンジを <strong>" + roundNum(recommendation.lowerBound) + "〜" + roundNum(recommendation.upperBound) + " kcal/日</strong> とし、";
+        safeText += "中心の目安として <strong>" + roundNum(recommendedCalories) + " kcal/日</strong> を表示しています。";
+      } else if (recommendation.mode === "gain") {
+        safeText += "増量では、脂肪が増えすぎないように緩やかな上乗せを推奨しています。<br>";
+        safeText += "このツールでは推奨レンジを <strong>" + roundNum(recommendation.lowerBound) + "〜" + roundNum(recommendation.upperBound) + " kcal/日</strong> とし、";
+        safeText += "中心の目安として <strong>" + roundNum(recommendedCalories) + " kcal/日</strong> を表示しています。";
+      } else {
+        safeText += "現在体重と目標体重が同じなので、維持カロリーに近い値を推奨しています。";
+      }
+      byId("safeText").innerHTML = safeText;
+
+      var warnings = [];
       if (goalWeight === currentWeight) {
-        warns.push("現在体重と目標体重が同じため、体重維持向けの結果です。");
+        warnings.push("現在体重と目標体重が同じため、体重維持向けの結果です。");
       }
       if (weeklyPace > 1.0) {
-        warns.push("ペースがかなり速めです。期限を延ばした方が現実的な可能性があります。");
+        warnings.push("週あたり1.0kgを超えるペースで、かなり速めです。");
       }
-      if (targetCalories < bmr) {
-        warns.push("目標摂取カロリーが基礎代謝を下回っています。かなり厳しめの設定です。");
+      if (theoreticalCalories < bmr) {
+        warnings.push("理論上の目標値が基礎代謝を下回っています。かなり厳しい設定です。");
       }
-      if (targetCalories < 1200) {
-        warns.push("1,200kcal未満はかなり低い設定です。無理のない範囲で見直してください。");
+      if (theoreticalCalories < 1200) {
+        warnings.push("理論上の目標値が1,200kcal未満です。極端な制限は推奨しにくいです。");
       }
-      if (targetCalories > tdee + 800) {
-        warns.push("増量ペースがかなり大きめです。段階的な調整をおすすめします。");
+      if (theoreticalCalories > tdee + 800) {
+        warnings.push("理論上の増量幅がかなり大きく、脂肪増加も起こりやすい可能性があります。");
       }
 
-      if (warns.length > 0) {
-        byId("warn").style.display = "block";
-        byId("warn").innerHTML = "注意点<br>・" + warns.join("<br>・");
+      if (warnings.length > 0) {
+        byId("warningSection").style.display = "block";
+        byId("warningText").innerHTML = "<ul><li>" + warnings.join("</li><li>") + "</li></ul>";
       } else {
-        byId("warn").style.display = "none";
-        byId("warn").innerHTML = "";
+        byId("warningSection").style.display = "none";
+        byId("warningText").innerHTML = "";
+      }
+
+      var deadlineMessage = "";
+      if (recommendation.mode === "loss" && theoreticalCalories < recommendation.lowerBound) {
+        var realisticDailyCut = 500;
+        var realisticDays = Math.ceil(Math.abs(weightChangeKg * 7200) / realisticDailyCut);
+        deadlineMessage += "この期限で達成するための理論値はかなり低く、現実的には厳しめです。<br>";
+        deadlineMessage += "まずは <strong>" + roundNum(recommendedCalories) + " kcal/日前後</strong> を目安にし、";
+        deadlineMessage += "必要であれば期限を <strong>約" + realisticDays + "日以上</strong> に延ばすことを検討してください。";
+        byId("deadlineSection").style.display = "block";
+        byId("deadlineText").innerHTML = deadlineMessage;
+      } else if (recommendation.mode === "gain" && theoreticalCalories > recommendation.upperBound) {
+        var realisticDailyGain = 250;
+        var realisticDaysGain = Math.ceil(Math.abs(weightChangeKg * 7200) / realisticDailyGain);
+        deadlineMessage += "この期限で達成するための理論値はかなり高く、現実的には厳しめです。<br>";
+        deadlineMessage += "まずは <strong>" + roundNum(recommendedCalories) + " kcal/日前後</strong> を目安にし、";
+        deadlineMessage += "必要であれば期限を <strong>約" + realisticDaysGain + "日以上</strong> に延ばすことを検討してください。";
+        byId("deadlineSection").style.display = "block";
+        byId("deadlineText").innerHTML = deadlineMessage;
+      } else {
+        byId("deadlineSection").style.display = "none";
+        byId("deadlineText").innerHTML = "";
       }
 
       byId("result").style.display = "block";
@@ -334,9 +577,15 @@
       byId("activity").value = "1.55";
       byId("daysUntilGoal").value = "";
       byId("result").style.display = "none";
-      byId("warn").style.display = "none";
-      byId("warn").innerHTML = "";
+      byId("warningSection").style.display = "none";
+      byId("deadlineSection").style.display = "none";
+      byId("warningText").innerHTML = "";
+      byId("deadlineText").innerHTML = "";
+      byId("formulaText").innerHTML = "";
+      byId("logicText").innerHTML = "";
+      byId("safeText").innerHTML = "";
     }
   </script>
 </body>
+
 </html>
